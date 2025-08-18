@@ -4694,6 +4694,55 @@
     						saveAsFile();
     					}
     				});
+    				if (isTouchDevice) {
+    					function preventTextSelection(e) {
+    						if (longPressTimer) {
+    							e.preventDefault();
+    							return false;
+    						}
+    					}
+    					const container = APP_CONTAINER || document.querySelector('.cgp-container');
+    					if (container) {
+    						container.addEventListener('selectstart', preventTextSelection, { passive: false });
+    						container.addEventListener('dragstart', preventTextSelection, { passive: false });
+    						container.addEventListener('touchstart', function(e) {
+    							container.classList.add('touch-active');
+    						}, { passive: false });
+    						container.addEventListener('touchend', function(e) {
+    							setTimeout(() => {
+    								container.classList.remove('touch-active');
+    							}, 100);
+    						});
+    					}
+    					let lastTap = 0;
+    					document.addEventListener('touchend', function(e) {
+    						const currentTime = new Date().getTime();
+    						const tapLength = currentTime - lastTap;
+    						if (tapLength < 500 && tapLength > 0) {
+    							if (e.target.closest('.cgp-container')) {
+    								e.preventDefault();
+    								return false;
+    							}
+    						}
+    						lastTap = currentTime;
+    					}, { passive: false });
+    				}
+    				function addViewportMeta() {
+    					let viewport = document.querySelector('meta[name="viewport"]');
+    					if (!viewport) {
+    						viewport = document.createElement('meta');
+    						viewport.name = 'viewport';
+    						document.head.appendChild(viewport);
+    					}
+    					const content = viewport.getAttribute('content') || '';
+    					if (!content.includes('user-scalable=no')) {
+    						const newContent = content + (content ? ', ' : '') + 'user-scalable=no, maximum-scale=1.0, minimum-scale=1.0';
+    						viewport.setAttribute('content', newContent);
+    					}
+    				}
+    				if (isTouchDevice) {
+    					addViewportMeta();
+    				}
     			});
 
 })();
