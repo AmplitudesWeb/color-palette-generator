@@ -6,11 +6,11 @@
  * Please credit Amplitudes Web if you use this script.
  * 
  * For commercial use, licensing, or custom development:
- * Contact: info@amplitudes.ca
+ * Contact: Amplitudes Web
  * 
  * © Amplitudes Web - All rights reserved
  */
- 
+
 (function() {
     'use strict';
     
@@ -3319,11 +3319,22 @@
     			function copyToClipboard(text, message = 'Color copied to clipboard!') {
     				navigator.clipboard.writeText(text).then(() => {
     					const notification = document.getElementById('cgCopyNotification');
+    					const helpLink = document.getElementById('helpLink');
+    					if (helpLink) {
+    						helpLink.style.opacity = '0';
+    						helpLink.style.pointerEvents = 'none';
+    					}
     					notification.textContent = message;
     					notification.classList.add('show');
     					setTimeout(() => {
     						notification.classList.remove('show');
-    					}, 2000);
+    						setTimeout(() => {
+    							if (helpLink) {
+    								helpLink.style.opacity = '1';
+    								helpLink.style.pointerEvents = 'auto';
+    							}
+    						}, 300); // Match the transition duration
+    					}, 1500); // Show for 1.5 seconds
     				});
     			}
     			function generateColorPalettes() {
