@@ -1895,16 +1895,16 @@
     				switch (tetradicPairingMode) {
     					case 'square':
     						hues = [theoryHue, (theoryHue + 90) % 360, complementHue, (complementHue + 90) % 360];
-    						labels = ['Base', '+90°', 'Comp', 'Comp+90°'];
+    						labels = ['base', '+90°', 'comp', 'comp +90°'];
     						break;
     					case 'double-split':
     						hues = [theoryHue, (theoryHue + 30) % 360, complementHue, (complementHue + 30) % 360];
-    						labels = ['Base', '+30°', 'Comp', 'Comp+30°'];
+    						labels = ['base', '+30°', 'comp', 'comp +30°'];
     						break;
     					case 'rectangle':
     					default:
     						hues = [theoryHue, (theoryHue + 60 * direction + 360) % 360, complementHue, (complementHue + 60 * direction + 360) % 360];
-    						labels = ['Base', `+${60*direction}°`, 'Comp', `Comp+${60*direction}°`];
+    						labels = ['base', `+${60*direction}°`, 'comp', `comp +${60*direction}°`];
     						break;
     				}
     				let baseSaturations = [];
