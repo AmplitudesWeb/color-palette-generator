@@ -271,7 +271,7 @@
     			const COMPLEMENT_MIN_SATURATION = 0.2;
     			const COMPLEMENT_MAX_SATURATION = 0.8;
     			let selectedHue = 217;
-    			let baseSaturation = 75;
+    			let baseSaturation = 70;
     			let baseBrightness = 60;
     			let displayFormat = 'HEX';
     			let advancedControlsActive = false;
@@ -336,6 +336,93 @@
     			let hasUnsavedFileChanges = false;  // Track changes since last manual save
     			let hasRestoredSession = false;
     			const FILE_EXTENSION = '.cgp';  // Color Generator Palette
+    			let hasShownTipPopup = false;
+    			let sessionStartTime = Date.now();
+    			function checkSimpleTipTrigger() {
+    				if (localStorage.getItem('tipPopupNeverShow') === 'true') return;
+    				const remindAfter = localStorage.getItem('tipPopupRemindAfter');
+    				if (remindAfter && Date.now() < parseInt(remindAfter)) return;
+    				if (hasShownTipPopup) return;
+    				const actionCount = history.length;
+    				const timeSpent = (Date.now() - sessionStartTime) / 1000 / 60;
+    				if (actionCount >= 12 || timeSpent >= 5) {
+    					showTipPopup();
+    					hasShownTipPopup = true;
+    				}
+    			}
+    			setInterval(checkSimpleTipTrigger, 30000);
+    			function showTipPopup() {
+    				let overlay = document.getElementById('tipPopupOverlay');
+    				if (overlay) {
+    					overlay.style.display = 'flex';
+    					setTimeout(() => overlay.classList.add('visible'), 10);
+    					return;
+    				}
+    				overlay = document.createElement('div');
+    				overlay.className = 'confirm-overlay';
+    				overlay.id = 'tipPopupOverlay';
+    				overlay.innerHTML = `
+    					<div class="confirm-popup" style="max-width: 480px;">
+    						<div class="confirm-header">
+    							<h3 class="confirm-title">Enjoying the Color Palette Generator?</h3>
+    						</div>
+    						<div class="confirm-content">
+    							<p>This tool is <strong>free</strong> and <strong>ad-free</strong>, and we plan to keep it that way!</p>
+    							<p>If you're finding it useful for your projects, consider leaving a tip to help support ongoing development and new features. Every contribution, no matter how small, is greatly appreciated!</p>
+    							<p style="font-size: 13px; color: #8796A5; margin-top: 15px; text-align: center;">
+    								Thank you for using the Color Palette Generator!
+    							</p>
+    						</div>
+    						<div class="confirm-footer" style="gap: 8px;">
+    							<button class="confirm-btn cancel" id="tipRemindBtn" style="font-size: 11px; padding: 8px 10px; white-space: nowrap;">Remind me</button>
+    							<button class="confirm-btn cancel" id="tipNeverShowBtn" style="font-size: 11px; padding: 8px 10px; white-space: nowrap;">Never show</button>
+    							<button class="confirm-btn save" id="tipLeaveBtn" style="font-size: 11px; padding: 8px 10px; white-space: nowrap;">Leave a tip ❤</button>
+    						</div>
+    					</div>
+    				`;
+    				APP_CONTAINER.appendChild(overlay);
+    				const remindBtn = document.getElementById('tipRemindBtn');
+    				const neverShowBtn = document.getElementById('tipNeverShowBtn');
+    				const leaveTipBtn = document.getElementById('tipLeaveBtn');
+    				const hidePopup = () => {
+    					overlay.classList.remove('visible');
+    					setTimeout(() => {
+    						overlay.style.display = 'none';
+    					}, 300);
+    				};
+    				remindBtn.addEventListener('click', () => {
+    					const tomorrow = Date.now() + (24 * 60 * 60 * 1000);
+    					localStorage.setItem('tipPopupRemindAfter', tomorrow);
+    					hidePopup();
+    				});
+    				neverShowBtn.addEventListener('click', () => {
+    					localStorage.setItem('tipPopupNeverShow', 'true');
+    					hidePopup();
+    				});
+    				leaveTipBtn.addEventListener('click', () => {
+    					window.open('https://paypal.me/amplitudesweb', '_blank');
+    					hidePopup();
+    					localStorage.setItem('tipPopupNeverShow', 'true');
+    				});
+    				overlay.addEventListener('click', (e) => {
+    					if (e.target === overlay) {
+    						const tomorrow = Date.now() + (24 * 60 * 60 * 1000);
+    						localStorage.setItem('tipPopupRemindAfter', tomorrow);
+    						hidePopup();
+    					}
+    				});
+    				document.addEventListener('keydown', function tipEscHandler(e) {
+    					if (e.key === 'Escape' && overlay.classList.contains('visible')) {
+    						const tomorrow = Date.now() + (24 * 60 * 60 * 1000);
+    						localStorage.setItem('tipPopupRemindAfter', tomorrow);
+    						hidePopup();
+    					}
+    				});
+    				overlay.style.display = 'flex';
+    				setTimeout(() => {
+    					overlay.classList.add('visible');
+    				}, 10);
+    			}
     			function saveToLocalStorage() {
     				try {
     					const state = getCurrentState();
@@ -869,6 +956,7 @@
     				updateUndoRedoButtons();
     				checkForChanges();
     				autoSave();
+    				checkSimpleTipTrigger();
     			}
     			function undo() {
     				if (history.length <= 1) return;
