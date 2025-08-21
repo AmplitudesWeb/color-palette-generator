@@ -3416,7 +3416,7 @@
     				section.appendChild(actionsContainer);
     				return section;
     			}
-    			function copyToClipboard(text, message = 'Color copied to clipboard!') {
+    			function copyToClipboard(text, message = 'Color copied to clipboard') {
     				navigator.clipboard.writeText(text).then(() => {
     					const container = document.querySelector('.cgp-container');
     					const helpLink = container ? container.querySelector('#helpLink') : document.getElementById('helpLink');
