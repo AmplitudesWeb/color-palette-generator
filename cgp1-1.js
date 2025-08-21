@@ -10,7 +10,7 @@
  * 
  * © Amplitudes Web - All rights reserved
  */
- 
+
 (function() {
     'use strict';
     
@@ -744,7 +744,7 @@
     					hasRestoredSession = false; // Clear the restored session flag
     					updateFileStatus();
     					showSaveIndicator();
-    					showSaveNotification('Project saved!');
+    					showSaveNotification('Project saved');
     				} catch (err) {
     					console.error('Failed to save file:', err);
     					alert('Failed to save file. Please try Save As instead.');
@@ -3416,23 +3416,25 @@
     				section.appendChild(actionsContainer);
     				return section;
     			}
-    			function copyToClipboard(text, message = 'Color copied to clipboard') {
+    			function copyToClipboard(text, message = 'Color copied to clipboard!') {
     				navigator.clipboard.writeText(text).then(() => {
-    					const helpLink = document.getElementById('helpLink');
-    					const helpLinkIcon = document.getElementById('helpLinkIcon');
-    					const helpLinkText = document.getElementById('helpLinkText');
+    					const container = document.querySelector('.cgp-container');
+    					const helpLink = container ? container.querySelector('#helpLink') : document.getElementById('helpLink');
+    					const helpLinkIcon = container ? container.querySelector('#helpLinkIcon') : document.getElementById('helpLinkIcon');
+    					const helpLinkText = container ? container.querySelector('#helpLinkText') : document.getElementById('helpLinkText');
     					helpLinkText.textContent = message;
     					const tempSpan = document.createElement('span');
     					tempSpan.style.cssText = 'position: absolute; visibility: hidden; font-family: Poppins, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap;';
     					tempSpan.textContent = message;
-    					APP_CONTAINER.appendChild(tempSpan);
+    					const appendTarget = container || document.body;
+    					appendTarget.appendChild(tempSpan);
     					const textWidth = tempSpan.getBoundingClientRect().width;
-    					document.body.removeChild(tempSpan);
-    					const totalWidth = 40 + textWidth + 10; // Added 10px extra padding
+    					appendTarget.removeChild(tempSpan);
+    					const totalWidth = 40 + textWidth + 10;
     					helpLinkIcon.style.opacity = '0';
     					setTimeout(() => {
     						helpLinkIcon.textContent = '⧉';
-    						helpLinkIcon.classList.add('copy-symbol'); // Add class for smaller size
+    						helpLinkIcon.classList.add('copy-symbol');
     						helpLinkIcon.style.fontSize = '16px';
     						helpLinkIcon.style.opacity = '1';
     					}, 200);
@@ -3442,12 +3444,12 @@
     					}, 300);
     					setTimeout(() => {
     						helpLink.classList.remove('copy-notification-active');
-    						helpLink.style.width = '40px'; // Reset to original width
+    						helpLink.style.width = '40px';
     						setTimeout(() => {
     							helpLinkIcon.style.opacity = '0';
     							setTimeout(() => {
     								helpLinkIcon.textContent = '?';
-    								helpLinkIcon.classList.remove('copy-symbol'); // Remove class to restore size
+    								helpLinkIcon.classList.remove('copy-symbol');
     								helpLinkIcon.style.fontSize = '20px';
     								helpLinkIcon.style.opacity = '1';
     							}, 200);
@@ -3455,13 +3457,14 @@
     					}, 2000);
     				});
     			}
-    			function showSaveNotification(message = 'Project saved!', filename = null) {
-    				const helpLink = document.getElementById('helpLink');
-    				const helpLinkIcon = document.getElementById('helpLinkIcon');
-    				const helpLinkText = document.getElementById('helpLinkText');
+    			function showSaveNotification(message = 'Project saved', filename = null) {
+    				const container = document.querySelector('.cgp-container');
+    				const helpLink = container ? container.querySelector('#helpLink') : document.getElementById('helpLink');
+    				const helpLinkIcon = container ? container.querySelector('#helpLinkIcon') : document.getElementById('helpLinkIcon');
+    				const helpLinkText = container ? container.querySelector('#helpLinkText') : document.getElementById('helpLinkText');
     				let displayMessage = message;
     				if (filename) {
-    					const maxLength = 25; // Same as desktop file status display
+    					const maxLength = 25;
     					const truncatedName = truncateFileName(filename, maxLength);
     					displayMessage = `Project saved as ${truncatedName}`;
     				}
@@ -3469,9 +3472,10 @@
     				const tempSpan = document.createElement('span');
     				tempSpan.style.cssText = 'position: absolute; visibility: hidden; font-family: Poppins, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap;';
     				tempSpan.textContent = displayMessage;
-    				APP_CONTAINER.appendChild(tempSpan);
+    				const appendTarget = container || document.body;
+    				appendTarget.appendChild(tempSpan);
     				const textWidth = tempSpan.getBoundingClientRect().width;
-    				document.body.removeChild(tempSpan);
+    				appendTarget.removeChild(tempSpan);
     				const totalWidth = 40 + textWidth + 10;
     				helpLinkIcon.style.opacity = '0';
     				setTimeout(() => {
@@ -3480,7 +3484,7 @@
     						<polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     						<polyline points="7 3 7 8 15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     					</svg>`;
-    					helpLinkIcon.classList.add('copy-symbol'); // Add this line to make it smaller
+    					helpLinkIcon.classList.add('copy-symbol');
     					helpLinkIcon.style.fontSize = 'inherit';
     					helpLinkIcon.style.opacity = '1';
     				}, 200);
