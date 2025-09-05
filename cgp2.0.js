@@ -1098,16 +1098,17 @@
     					existing.remove();
     				}
     			}
-    			document.addEventListener('mouseenter', (e) => {
-    				if (e.target.classList.contains('cg-palette-title')) {
-    					showPaletteTooltip(e.target);
-    				}
-    			}, true);
-    			document.addEventListener('mouseleave', (e) => {
-    				if (e.target.classList.contains('cg-palette-title')) {
-    					hidePaletteTooltip();
-    				}
-    			}, true);		
+                document.addEventListener('mouseenter', (e) => {
+                    if (e.target && e.target.classList && e.target.classList.contains('cg-palette-title')) {
+                        showPaletteTooltip(e.target);
+                    }
+                }, true);
+                
+                document.addEventListener('mouseleave', (e) => {
+                    if (e.target && e.target.classList && e.target.classList.contains('cg-palette-title')) {
+                        hidePaletteTooltip();
+                    }
+                }, true);	
     			async function animatePinning(paletteToPin) {
     				const container = document.getElementById('cgPalettesContainer');
     				const palettes = Array.from(container.querySelectorAll('.cg-palette-section'));
