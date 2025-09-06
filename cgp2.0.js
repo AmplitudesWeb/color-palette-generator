@@ -1098,17 +1098,28 @@
     					existing.remove();
     				}
     			}
-                document.addEventListener('mouseenter', (e) => {
-                    if (e.target && e.target.classList && e.target.classList.contains('cg-palette-title')) {
-                        showPaletteTooltip(e.target);
-                    }
-                }, true);
-                
-                document.addEventListener('mouseleave', (e) => {
-                    if (e.target && e.target.classList && e.target.classList.contains('cg-palette-title')) {
-                        hidePaletteTooltip();
-                    }
-                }, true);	
+    			document.addEventListener('mouseenter', (e) => {
+    				if (e.target && e.target.classList && e.target.classList.contains('cg-palette-title')) {
+    					showPaletteTooltip(e.target);
+    				}
+    			}, true);
+    			document.addEventListener('mouseleave', (e) => {
+    				if (e.target && e.target.classList && e.target.classList.contains('cg-palette-title')) {
+    					hidePaletteTooltip();
+    				}
+    			}, true);	
+    			document.addEventListener('scroll', () => {
+    				hidePaletteTooltip();
+    			}, true);
+    			window.addEventListener('scroll', () => {
+    				hidePaletteTooltip();
+    			});
+    			const palettesContainer = document.getElementById('cgPalettesContainer');
+    			if (palettesContainer) {
+    				palettesContainer.addEventListener('scroll', () => {
+    					hidePaletteTooltip();
+    				});
+    			}			
     			async function animatePinning(paletteToPin) {
     				const container = document.getElementById('cgPalettesContainer');
     				const palettes = Array.from(container.querySelectorAll('.cg-palette-section'));
@@ -4919,10 +4930,10 @@
     				setValuePopup = createSetValuePopup();
     				document.addEventListener('contextmenu', showContextMenu);
     				document.addEventListener('click', (e) => {
-    					if (!contextMenu.contains(e.target)) {
+    					if (contextMenu && !contextMenu.contains(e.target)) {
     						hideContextMenu();
     					}
-    					if (!setValuePopup.popup.contains(e.target)) {
+    					if (setValuePopup && setValuePopup.popup && !setValuePopup.popup.contains(e.target)) {
     						hideSetValuePopup();
     					}
     				});
